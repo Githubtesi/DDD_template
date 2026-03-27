@@ -7,3 +7,6 @@ from .exceptions import (
     ValueObjectValidationError, 
     EntityNotFoundError
 )
+from .domain_service import DomainService
+from .factory import Factory
+from .specification import Specification
