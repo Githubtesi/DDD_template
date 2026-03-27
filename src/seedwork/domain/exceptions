@@ -1,0 +1,7 @@
+class DomainException(Exception):
+    """ドメイン層で発生する例外の基底クラス"""
+    pass
+
+class ValidationError(DomainException):
+    """バリデーション失敗時の例外"""
+    pass
