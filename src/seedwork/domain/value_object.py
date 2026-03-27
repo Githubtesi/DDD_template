@@ -1,16 +1,23 @@
+# src/seedwork/domain/value_object.py
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+from .exceptions import ValueObjectValidationError # 追加
 
 @dataclass(frozen=True)
 class ValueObject(ABC):
-    """
-    全ての値オブジェクトの基底クラス。
-    frozen=True により、継承先でも値の変更を禁止する。
-    """
     def __post_init__(self):
-        self.validate()
+        try:
+            self.validate()
+        except Exception as e:
+            # 予期せぬエラーも、ValueObjectとしてのエラーにラップして明示する
+            if not isinstance(e, ValueObjectValidationError):
+                raise ValueObjectValidationError(str(e), self.__class__.__name__)
+            raise e
 
     @abstractmethod
     def validate(self):
-        """値の妥当性をチェックするロジックを強制する"""
+        """
+        バリデーションロジック。
+        失敗した場合は ValueObjectValidationError を raise すること。
+        """
         pass
