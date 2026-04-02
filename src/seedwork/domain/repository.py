@@ -1,7 +1,7 @@
 # src/seedwork/domain/repository.py
 from abc import ABC, abstractmethod
 from typing import Generic, TypeVar, List, Optional
-from .exceptions import EntityNotFoundError
+from .domain_exception import EntityNotFoundError
 
 # T はエンティティの型を表す変数
 T = TypeVar('T')
