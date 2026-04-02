@@ -12,7 +12,6 @@
 """
 
 from dataclasses import dataclass
-from typing import Optional, List
 from datetime import datetime
 
 # Seedworkからのインポート（パスはプロジェクト構成に合わせて調整）
@@ -66,13 +65,13 @@ class CreateTaskUseCase(IUseCase[CreateTaskCommand, str]):
 
     def execute(self, command: CreateTaskCommand) -> Result[str]:
         # A. 認証・権限の確認 (Identity)
-        identity = self._identity_context.get_current_identity()
-        if not identity.is_authenticated:
-            return Result.fail("ログインが必要です", "UNAUTHORIZED")
+        identity = self._identity_context.current_identity
+        if not identity.is_in_role("user"):
+            return Result.fail("ログインが必要です")
 
         # B. 入力バリデーション (ValidationErrorのシミュレーション)
         if len(command.title) < 3:
-            return Result.fail("タイトルが短すぎます", "VALIDATION_ERROR")
+            return Result.fail("タイトルが短すぎます")
 
         try:
             # C. トランザクション開始 (Unit of Work)
@@ -82,7 +81,7 @@ class CreateTaskUseCase(IUseCase[CreateTaskCommand, str]):
                 new_task = Task(
                     id=task_id, 
                     title=command.title, 
-                    owner_id=identity.user_id,
+                    owner_id=identity.id,
                     created_at=datetime.now()
                 )
                 
@@ -116,9 +115,10 @@ class MockUnitOfWork(IUnitOfWork):
     def rollback(self): print("[UoW] ロールバック（破棄）しました")
 
 class MockIdentityContext(IIdentityContext):
-    def __init__(self, user_id: str, is_auth: bool = True):
-        self._user = Identity(user_id=user_id, username="test_user", is_authenticated=is_auth)
-    def get_current_identity(self) -> Identity:
+    def __init__(self, user_id: str):
+        self._user = Identity(id=user_id, name="test_user",roles=["user"])
+    @property
+    def current_identity(self) -> Identity:
         return self._user
 
 # ---------------------------------------------------------
@@ -142,7 +142,7 @@ if __name__ == "__main__":
 
     # --- パターン2: 失敗ケース (未ログインユーザー) ---
     print("\n--- 未ログインの場合 ---")
-    ctx_guest = MockIdentityContext(user_id="", is_auth=False)
+    ctx_guest = MockIdentityContext(user_id="")
     usecase_guest = CreateTaskUseCase(repo, uow, ctx_guest)
     
     result_fail = usecase_guest.execute(cmd)
