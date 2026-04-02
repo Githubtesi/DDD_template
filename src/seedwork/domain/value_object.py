@@ -1,7 +1,9 @@
 # src/seedwork/domain/value_object.py
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from .exceptions import ValueObjectValidationError # 追加
+from typing import Any
+
+from .domain_exception import ValueObjectValidationError # 追加
 
 @dataclass(frozen=True)
 class ValueObject(ABC):
