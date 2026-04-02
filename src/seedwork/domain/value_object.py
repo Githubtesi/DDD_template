@@ -21,3 +21,9 @@ class ValueObject(ABC):
         失敗した場合は ValueObjectValidationError を raise すること。
         """
         pass
+
+
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, ValueObject):
+            return False
+        return self.__dict__ == other.__dict__
