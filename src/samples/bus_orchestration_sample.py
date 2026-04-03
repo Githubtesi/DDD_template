@@ -53,7 +53,7 @@ class CreateOrderHandler(IUseCase[CreateOrderCommand, str]):
         self._ctx = ctx
 
     def execute(self, command: CreateOrderCommand) -> Result[str]:
-        identity = self._ctx.get_current_identity()
+        identity = self._ctx.current_identity
         if not identity.is_authenticated:
             return Result.fail("認証が必要です")
 
@@ -62,7 +62,7 @@ class CreateOrderHandler(IUseCase[CreateOrderCommand, str]):
                 order_id = self._repo.next_identity()
                 order = Order(
                     id=order_id,
-                    customer_id=identity.user_id,
+                    customer_id=identity.id,
                     items=command.items,
                     total_price=command.total_price
                 )
@@ -95,8 +95,8 @@ class GetOrderHistoryHandler(IQueryHandler[GetOrderHistoryQuery, List[OrderReadM
         self._ctx = ctx
 
     def handle(self, query: GetOrderHistoryQuery) -> List[OrderReadModel]:
-        identity = self._ctx.get_current_identity()
-        print(f"[Query] ユーザー {identity.username} の履歴を最大 {query.limit} 件取得します...")
+        identity = self._ctx.current_identity
+        print(f"[Query] ユーザー {identity.name} の履歴を最大 {query.limit} 件取得します...")
         
         # モックデータの返却
         return [
@@ -121,9 +121,9 @@ class MockUoW(IUnitOfWork):
     def rollback(self): pass
 
 class MockIdentityContext(IIdentityContext):
-    def get_current_identity(self) -> Identity:
-        return Identity(user_id="user-123", username="GopherKun", is_authenticated=True)
-
+    @property
+    def current_identity(self) -> Identity:
+        return Identity(id="user-123", name="GopherKun")
 # ---------------------------------------------------------
 # 5. Integration - Bus Setup & Usage
 # ---------------------------------------------------------
