@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Type, TypeVar
 from .messaging import Command, Query, IUseCase, IQueryHandler
-from .results import Result
+from .result import Result
 
 class ICommandBus(ABC):
     @abstractmethod

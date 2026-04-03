@@ -17,7 +17,7 @@ from datetime import datetime
 from seedwork.domain import AggregateRoot, IRepository
 from seedwork.application import (
     Command, Query, IUseCase, IQueryHandler, 
-    Result, PaginatedResult, DTO,
+    Result, DTO,
     InMemoryBus, IIdentityContext, Identity, IUnitOfWork
 )
 

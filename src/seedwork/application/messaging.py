@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Generic, TypeVar, Any
-from .results import Result
+from .result import Result
 
 # 型変数の定義
 C = TypeVar('C') # Command type
