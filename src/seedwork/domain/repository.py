@@ -5,8 +5,9 @@ from .domain_exception import EntityNotFoundError
 
 # T はエンティティの型を表す変数
 T = TypeVar('T')
+ID = TypeVar("ID")
 
-class IRepository(ABC, Generic[T]):
+class IRepository(Generic[T, ID], ABC):
     """
     全リポジトリの基底インターフェース。
     基本的なCRUDのシグネチャを定義する。

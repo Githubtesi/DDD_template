@@ -1,9 +1,9 @@
 from dataclasses import dataclass, field
-from typing import List, Any
+from typing import List, Any, Generic
 from .entity import Entity, ID
 
 @dataclass
-class AggregateRoot(Entity[ID]):
+class AggregateRoot(Generic[ID], Entity[ID]):
     """
     集約ルートの基底クラス。
     エンティティとしての特性を持ちつつ、ドメインイベントを管理する機能を持つ。
