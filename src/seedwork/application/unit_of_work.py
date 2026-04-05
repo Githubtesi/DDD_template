@@ -9,7 +9,6 @@ class IUnitOfWork(ABC):
     複数のリポジトリ操作を一つのトランザクション（原子性）として管理します。
     """
 
-    @abstractmethod
     def __enter__(self: T) -> T:
         """コンテキストを開始します。"""
         return self
