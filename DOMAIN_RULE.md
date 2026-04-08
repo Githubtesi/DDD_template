@@ -40,14 +40,13 @@ AIは、検討対象の要素が以下のどの「部品」に該当するかを
 1. ステップ1で合意した構成に基づき、src/seedwork/ のベースクラスを継承して実装する。
 
 2. 実装の共通ルール:
-+ エラー処理: ルール違反時は exceptions.py の ValueObjectValidationError 等を利用する。 
-+ カプセル化: Value Objectは不変とし、Entityの状態変更はメソッド経由で行う。 
-+ 配置: application_service.py はドメイン層ではなく、**「アプリケーション層」**に置くことを厳守する。
++ クラス定義: 
+    - Value Objectは `@dataclass(frozen=True)` を付与し、`validate()` メソッドを実装する。
+    - Entityは `@dataclass(eq=False)` を付与し、IDによる同一性判定を維持する。
++ エラー処理: ルール違反時は `domain_exception.py` の `ValueObjectValidationError` 等を利用する。
++ カプセル化: Value Objectは不変とし、Entityの状態変更はメソッド経由で行う。
++ 配置: 
+    - `application_service.py` やユースケースはドメイン層ではなく、**「アプリケーション層」**に置くことを厳守する。
+    - 各機能は `src/features/[機能名]/` 配下で垂直に切り分ける。
 
-3. Value Objectの定義ルール
-+ 必ず from dataclasses import dataclass を含める。
-+ クラスには @dataclass(frozen=True) を付与する。
-+ 基底クラスの抽象メソッドである def validate(self) -> None: を必ず実装する。 
 
-4. Entityの定義ルール
-+ クラスには @dataclass(eq=False) を付与する（ID比較を優先させるため）。
